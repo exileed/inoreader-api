@@ -1,0 +1,40 @@
+{
+    "name": "exileed/inoreader-api",
+    "description": "Inoreader.com api client",
+    "homepage" : "http://github.com/stevenmaguire/yelp-php",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Dmitriy Kuts (ExileeD)",
+            "email": "me@exileed.com",
+            "homepage" : "http://exileed.com",
+            "role" : "Developer"
+        }
+    ],
+    "keywords": [
+        "api",
+        "oauth2",
+        "inoreader",
+        "php"
+    ],
+    "license": "MIT",
+    "require": {
+        "php":"^7.1",
+        "guzzlehttp/guzzle": "^6.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^7.0",
+        "squizlabs/php_codesniffer": "~2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "ExileeD\\Inoreader\\":"src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "ExileeD\\Inoreader\\Test\\": "tests"
+        }
+    },
+    "minimum-stability": "stable"
+}
