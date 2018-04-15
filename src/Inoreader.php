@@ -398,7 +398,7 @@ class Inoreader
     /**
      * This method is used to mark articles as read, or to star them.
      *
-     * @param array  $items  Item ID
+     * @param array  $item  Item ID
      * @param string $add    Tag to add
      * @param string $remove Tag to remove
      *
@@ -406,13 +406,12 @@ class Inoreader
      * @throws InoreaderException
      * @return bool
      */
-    public function editTag(array $items, string $add = null, string $remove = null): bool
+    public function editTag($item, string $add = null, string $remove = null): bool
     {
 
-        $i = http_build_query($items);
 
         $params = [
-            'i' => $i,
+            'i' => $item,
             'a' => $add,
             'r' => $remove,
         ];
