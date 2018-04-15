@@ -9,8 +9,10 @@ use ExileeD\Inoreader\Exception\InoreaderException;
 use ExileeD\Inoreader\Objects\AddSubscription;
 use ExileeD\Inoreader\Objects\ItemIds;
 use ExileeD\Inoreader\Objects\StreamContents;
+use ExileeD\Inoreader\Objects\StreamPreferenceList;
 use ExileeD\Inoreader\Objects\Subscriptions;
 use ExileeD\Inoreader\Objects\Tag;
+use ExileeD\Inoreader\Objects\Token;
 use ExileeD\Inoreader\Objects\UnreadCount;
 use ExileeD\Inoreader\Objects\UserInfo;
 
@@ -91,7 +93,7 @@ class Inoreader
      * @see https://www.inoreader.com/developers/oauth
      * @return string
      */
-    public function authUrl(string $redirect_uri, string $state, string $scope = ''): string
+    public function getLoginUrl(string $redirect_uri, string $state, string $scope = ''): string
     {
 
         $query = [
@@ -105,7 +107,17 @@ class Inoreader
         return self::API_OAUTH . 'auth' . '?' . http_build_query($query);
     }
 
-    public function token(string $code, string $redirect_uri)
+    /**
+     *  Refreshing an access token
+     *
+     * @param string $code
+     * @param string $redirect_uri
+     *
+     * @see http://www.inoreader.com/developers/oauth
+     * @throws InoreaderException
+     * @return Token
+     */
+    public function accessTokenFromCode(string $code, string $redirect_uri): Token
     {
 
         $params = [
@@ -119,7 +131,31 @@ class Inoreader
 
         $response = $this->getClient()->post(self::API_OAUTH . 'token', $params);
 
-        return $response;
+        return new Token($response);
+    }
+
+    /**
+     *  Refreshing an access token
+     *
+     * @param string $refresh_token
+     *
+     * @see http://www.inoreader.com/developers/oauth
+     * @throws InoreaderException
+     * @return Token
+     */
+    public function accessTokenFromRefresh(string $refresh_token): Token
+    {
+
+        $params = [
+            'client_id'     => $this->api_key,
+            'client_secret' => $this->api_secret,
+            'refresh_token' => $refresh_token,
+            'grant_type'    => 'refresh_token',
+        ];
+
+        $response = $this->getClient()->post(self::API_OAUTH . 'token', $params);
+
+        return new Token($response);
     }
 
     /**
@@ -202,7 +238,7 @@ class Inoreader
     public function subscriptionList(): Subscriptions
     {
 
-        $response = $this->getClient()->get('active_search/create');
+        $response = $this->getClient()->get('subscription/list');
 
         return new Subscriptions($response);
 
@@ -278,14 +314,14 @@ class Inoreader
      *
      * @see http://www.inoreader.com/developers/preference-list
      * @throws InoreaderException
-     * @return StreamContents
+     * @return StreamPreferenceList
      */
-    public function streamPreferenceList(): StreamContents
+    public function streamPreferenceList(): StreamPreferenceList
     {
 
         $response = $this->getClient()->get('preference/stream/list');
 
-        return new StreamContents($response);
+        return new StreamPreferenceList($response);
 
     }
 
@@ -303,7 +339,7 @@ class Inoreader
      */
     public function streamPreferenceSet(string $stream_id, $key = null, $value = null): bool
     {
-        $this->getClient()->get('preference/stream/set',
+        $this->getClient()->post('preference/stream/set',
             [
                 's' => $stream_id,
                 'k' => $key,
@@ -328,7 +364,7 @@ class Inoreader
      */
     public function renameTag(string $source, string $target): bool
     {
-        $this->getClient()->get('rename-tag',
+        $this->getClient()->post('rename-tag',
             [
                 's'    => $source,
                 'dest' => $target,
@@ -350,7 +386,7 @@ class Inoreader
      */
     public function deleteTag(string $source): bool
     {
-        $this->getClient()->get('disable-tag',
+        $this->getClient()->post('disable-tag',
             [
                 's' => $source,
             ]
@@ -381,7 +417,7 @@ class Inoreader
             'r' => $remove,
         ];
 
-        $this->getClient()->get('edit-tag', $params);
+        $this->getClient()->post('edit-tag', $params);
 
         return true;
     }

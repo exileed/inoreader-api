@@ -11,6 +11,7 @@ use ExileeD\Inoreader\Objects\ItemIds;
 use ExileeD\Inoreader\Objects\StreamContents;
 use ExileeD\Inoreader\Objects\Subscriptions;
 use ExileeD\Inoreader\Objects\Tag;
+use ExileeD\Inoreader\Objects\Token;
 use ExileeD\Inoreader\Objects\UnreadCount;
 use ExileeD\Inoreader\Objects\UserInfo;
 use PHPUnit\Framework\TestCase;
@@ -74,15 +75,21 @@ class InoreaderTest extends TestCase
     }
 
     /** @test */
-    public function it_checks_token()
+    public function it_checks_access_token_from_code()
     {
 
+        $result = $this->client->accessTokenFromCode('123', 'http://localhost');
 
-        $this->markTestSkipped('skipped');
+        $this->assertInstanceOf(Token::class, $result);
+    }
 
-        $result = $this->client->token('123', 'http://localhost');
+    /** @test */
+    public function it_checks_access_token_from_refresh_token()
+    {
 
-        $this->assertEquals('', $result);
+        $result = $this->client->accessTokenFromRefresh('123');
+
+        $this->assertInstanceOf(Token::class, $result);
     }
 
 

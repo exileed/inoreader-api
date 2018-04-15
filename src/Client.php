@@ -37,9 +37,9 @@ class Client
      * @param array  $params
      *
      * @throws InoreaderException
-     * @return \stdClass
+     * @return \stdClass|bool
      */
-    public function post(string $endpoint, $params = []): \stdClass
+    public function post(string $endpoint, $params = [])
     {
 
         $headers = $this->headers();
@@ -93,12 +93,18 @@ class Client
      *
      * @param    ResponseInterface $response
      *
-     * @return   \stdClass The JSON response from the request
+     * @return   \stdClass|bool The JSON response from the request
      * @throws   InoreaderException
      */
-    private function processResponse(ResponseInterface $response): \stdClass
+    private function processResponse(ResponseInterface $response)
     {
-        return json_decode($response->getBody()->getContents());
+        $content = $response->getBody()->getContents();
+
+        if ($content === 'OK') {
+            return true;
+        }
+
+        return json_decode($content);
     }
 
     /**
@@ -110,7 +116,7 @@ class Client
      * @throws InoreaderException
      * @return \stdClass
      */
-    public function get(string $endpoint, $params = []): \stdClass
+    public function get(string $endpoint, $params = [])
     {
 
         $headers = $this->headers();
