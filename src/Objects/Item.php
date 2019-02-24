@@ -84,7 +84,7 @@ class Item extends AbstractObject implements ObjectInterface
 
     public function origin()
     {
-        return $this->data->id;
+        return $this->data->origin;
     }
 
 
