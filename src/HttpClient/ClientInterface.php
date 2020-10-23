@@ -1,8 +1,7 @@
 <?php declare(strict_types=1);
 
 
-namespace ExileeD\Inoreader\Client;
-
+namespace ExileeD\Inoreader\HttpClient;
 
 use ExileeD\Inoreader\Exception\InoreaderException;
 use Psr\Http\Message\ResponseInterface;

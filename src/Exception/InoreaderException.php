@@ -6,6 +6,6 @@ namespace ExileeD\Inoreader\Exception;
 /**
  * Class InoreaderException
  */
-class InoreaderException extends \Error
+class InoreaderException extends \Exception
 {
 }

@@ -3,8 +3,8 @@
 namespace ExileeD\Inoreader;
 
 
-use ExileeD\Inoreader\Client\ClientInterface;
-use ExileeD\Inoreader\Client\GuzzleClient;
+use ExileeD\Inoreader\HttpClient\ClientInterface;
+use ExileeD\Inoreader\HttpClient\GuzzleClient;
 use ExileeD\Inoreader\Exception\InoreaderException;
 use Psr\Http\Message\ResponseInterface;
 

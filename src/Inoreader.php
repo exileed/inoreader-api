@@ -4,7 +4,7 @@
 namespace ExileeD\Inoreader;
 
 
-use ExileeD\Inoreader\Client\ClientInterface;
+use ExileeD\Inoreader\HttpClient\ClientInterface;
 use ExileeD\Inoreader\Exception\InoreaderException;
 use ExileeD\Inoreader\Objects\AddSubscription;
 use ExileeD\Inoreader\Objects\ItemIds;
@@ -26,7 +26,7 @@ class Inoreader
      *
      * @var string
      */
-    protected $api_key;
+    private $apiKey;
     /**
      * @var string
      */
@@ -36,10 +36,9 @@ class Inoreader
      */
     protected $client;
 
-    public function __construct(int $api_key, string $api_secret, ClientInterface $client = null)
+    public function __construct(int $apiKey, string $api_secret, ClientInterface $client = null)
     {
-
-        $this->api_key    = $api_key;
+        $this->apiKey    = $apiKey;
         $this->api_secret = $api_secret;
 
         $this->client = new Client($client);
@@ -97,7 +96,7 @@ class Inoreader
     {
 
         $query = [
-            'client_id'     => $this->api_key,
+            'client_id'     => $this->apiKey,
             'redirect_uri'  => $redirect_uri,
             'response_type' => 'code',
             'scope'         => $scope,
@@ -123,7 +122,7 @@ class Inoreader
         $params = [
             'code'          => $code,
             'redirect_uri'  => $redirect_uri,
-            'client_id'     => $this->api_key,
+            'client_id'     => $this->apiKey,
             'client_secret' => $this->api_secret,
             'scope'         => '',
             'grant_type'    => 'authorization_code',
@@ -147,7 +146,7 @@ class Inoreader
     {
 
         $params = [
-            'client_id'     => $this->api_key,
+            'client_id'     => $this->apiKey,
             'client_secret' => $this->api_secret,
             'refresh_token' => $refresh_token,
             'grant_type'    => 'refresh_token',

@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace ExileeD\Inoreader\Client;
+namespace ExileeD\Inoreader\HttpClient;
 
 use ExileeD\Inoreader\Exception\InoreaderException;
 use GuzzleHttp\Client as HttpClient;
@@ -9,7 +9,6 @@ use Psr\Http\Message\ResponseInterface;
 
 class GuzzleClient implements ClientInterface
 {
-
     /**
      * @var HttpClient
      */
@@ -85,7 +84,6 @@ class GuzzleClient implements ClientInterface
 
     public function post($endpoint, $params = [], $headers = []): ResponseInterface
     {
-
         $body = [
             'form_params' => $params,
         ];

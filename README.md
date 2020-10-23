@@ -25,7 +25,36 @@ $ composer require exileed/inoreader-api
 
 ```php
 
-$client = new \ExileeD\Inoreader\Inoreader( 100, 'xxxx' );
+use ExileeD\Inoreader\Inoreader;
+
+$apiKey = 1000000;
+$apiSecret = 'xxxx';
+$token = 'ssss';
+
+
+$inoreaderClient = new Inoreader( $apiKey, $apiSecret );
+
+$inoreaderClient->setAccessToken($token);
+
+$inoreaderClient->itemsIds();
+```
+
+#### Access token via Oauth2
+
+```php
+
+use ExileeD\Inoreader\Inoreader;
+
+$apiKey = 1000000;
+$apiSecret = 'xxxx';
+
+
+$client = new Inoreader( $apiKey, $apiSecret );
+$redirectUrl = 'http://localhost';
+
+
+$client->getLoginUrl($redirectUrl)
+
 ```
 
 ### Advanced usage

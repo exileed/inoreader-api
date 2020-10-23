@@ -1,10 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace ExileeD\Inoreader\Test;
+namespace ExileeD\Inoreader\Test\Client;
 
-use ExileeD\Inoreader\Client;
-use ExileeD\Inoreader\Client\GuzzleClient;
+use ExileeD\Inoreader\HttpClient\GuzzleClient;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 

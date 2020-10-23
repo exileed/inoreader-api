@@ -4,14 +4,8 @@ declare(strict_types=1);
 namespace ExileeD\Inoreader\Test;
 
 use ExileeD\Inoreader\Client;
-use ExileeD\Inoreader\Client\GuzzleClient;
-use ExileeD\Inoreader\Inoreader;
-use ExileeD\Inoreader\Objects\AddSubscription;
-use ExileeD\Inoreader\Objects\StreamContents;
-use ExileeD\Inoreader\Objects\Subscriptions;
-use ExileeD\Inoreader\Objects\Tag;
-use ExileeD\Inoreader\Objects\UnreadCount;
-use ExileeD\Inoreader\Objects\UserInfo;
+use ExileeD\Inoreader\HttpClient\ClientInterface;
+use ExileeD\Inoreader\HttpClient\GuzzleClient;
 use PHPUnit\Framework\TestCase;
 
 class ClientTest extends TestCase
@@ -25,7 +19,6 @@ class ClientTest extends TestCase
 
     public function setUp()
     {
-
 
         $guzzle = $this->getHttpClientMock();
 
@@ -52,27 +45,25 @@ class ClientTest extends TestCase
 
         $result =  $this->client->getHttpClient();
 
-        $this->assertInstanceOf(Client\ClientInterface::class, $result);
+        self::assertInstanceOf(ClientInterface::class, $result);
     }
 
 
     /** @test */
     public function it_checks_post()
     {
-
         $result =  $this->client->post('test');
 
-        $this->assertInstanceOf(\stdClass::class, $result);
+        self::assertInstanceOf(\stdClass::class, $result);
     }
 
 
     /** @test */
     public function it_checks_get()
     {
-
         $result =  $this->client->get('test');
 
-        $this->assertInstanceOf(\stdClass::class, $result);
+        self::assertInstanceOf(\stdClass::class, $result);
     }
 
 

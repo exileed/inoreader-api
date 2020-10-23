@@ -4,22 +4,14 @@ matrix:
     include:
         - php: 7.1
         - php: 7.2
-        - php: nightly
-        - php: hhvm-nightly
-          sudo: required
-          dist: trusty
-          group: edge
-    fast_finish: true
-    allow_failures:
-        - php: nightly
-
+        - php: 7.3
+        - php: 7.4
 before_script:
   - travis_retry composer self-update
   - travis_retry composer install --no-interaction --prefer-source --dev
   - travis_retry phpenv rehash
 
 script:
-#  - ./vendor/bin/phpcs --standard=psr2 src/
   - ./vendor/bin/phpunit --coverage-text --coverage-clover=coverage.clover
 
 after_script:
