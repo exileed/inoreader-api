@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 /**
  * @package inoreader-api
  *
@@ -8,13 +10,10 @@ declare(strict_types=1);
  *
  */
 
-
 namespace ExileeD\Inoreader\Objects;
-
 
 class ItemIds extends AbstractObject implements ObjectInterface
 {
-
 
     public function items(): array
     {
@@ -29,9 +28,8 @@ class ItemIds extends AbstractObject implements ObjectInterface
         return $this->data->itemRefs;
     }
 
-    public function continuation(): string
+    public function continuation(): ?string
     {
         return $this->data->continuation;
     }
-
 }

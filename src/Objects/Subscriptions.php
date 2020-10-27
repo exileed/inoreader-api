@@ -1,8 +1,8 @@
-<?php declare(strict_types=1);
+<?php
 
+declare(strict_types=1);
 
 namespace ExileeD\Inoreader\Objects;
-
 
 class Subscriptions extends AbstractObject implements ObjectInterface
 {
@@ -15,12 +15,10 @@ class Subscriptions extends AbstractObject implements ObjectInterface
     {
 
         $items = [];
-
         foreach ($this->data->subscriptions as $subscription) {
             $items[] = new Subscription($subscription);
         }
 
         return $items;
     }
-
 }

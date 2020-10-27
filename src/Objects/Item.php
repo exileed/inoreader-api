@@ -1,8 +1,8 @@
-<?php declare(strict_types=1);
+<?php
 
+declare(strict_types=1);
 
 namespace ExileeD\Inoreader\Objects;
-
 
 class Item extends AbstractObject implements ObjectInterface
 {
@@ -86,6 +86,4 @@ class Item extends AbstractObject implements ObjectInterface
     {
         return $this->data->origin;
     }
-
-
 }

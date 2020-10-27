@@ -1,10 +1,10 @@
-<?php declare(strict_types=1);
+<?php
 
+declare(strict_types=1);
 
 namespace ExileeD\Inoreader;
 
-
-use ExileeD\Inoreader\HttpClient\ClientInterface;
+use ExileeD\Inoreader\HttpClient\HttpClient;
 use ExileeD\Inoreader\Exception\InoreaderException;
 use ExileeD\Inoreader\Objects\AddSubscription;
 use ExileeD\Inoreader\Objects\ItemIds;
@@ -27,28 +27,30 @@ class Inoreader
      * @var string
      */
     private $apiKey;
+
     /**
      * @var string
      */
-    protected $api_secret;
+    private $apiSecret;
+
     /**
      * @var Client
      */
-    protected $client;
+    private $client;
 
-    public function __construct(int $apiKey, string $api_secret, ClientInterface $client = null)
+    public function __construct(int $apiId, string $apiKey, HttpClient $httpClient = null)
     {
-        $this->apiKey    = $apiKey;
-        $this->api_secret = $api_secret;
-
-        $this->client = new Client($client);
+        $this->apiKey    = $apiId;
+        $this->apiSecret = $apiKey;
+        $client          = new Client($httpClient);
+        $this->setClient($client);
     }
 
 
     /**
      * @return string
      */
-    public function getAccessToken(): string
+    public function getAccessToken(): ?string
     {
         return $this->getClient()->getAccessToken();
     }
@@ -65,23 +67,21 @@ class Inoreader
     /**
      * @access public
      *
-     * @param  Client $client
+     * @param Client $client
      *
-     * @return $this
+     * @return void
      */
-    public function setClient(Client $client): self
+    public function setClient(Client $client): void
     {
         $this->client = $client;
-
-        return $this;
     }
 
     /**
-     * @param string $access_token
+     * @param string|null $accessToken
      */
-    public function setAccessToken(string $access_token): void
+    public function setAccessToken(string $accessToken = null): void
     {
-        $this->getClient()->setAccessToken($access_token);
+        $this->getClient()->setAccessToken($accessToken);
     }
 
     /**
@@ -89,18 +89,17 @@ class Inoreader
      * @param string $scope        You can pass read or read write
      * @param string $state        Up to 500 bytes of arbitrary data that will be passed back to your redirect URI.
      *
-     * @see https://www.inoreader.com/developers/oauth
      * @return string
+     * @see https://www.inoreader.com/developers/oauth
      */
     public function getLoginUrl(string $redirect_uri, string $state, string $scope = ''): string
     {
-
         $query = [
-            'client_id'     => $this->apiKey,
-            'redirect_uri'  => $redirect_uri,
+            'client_id' => $this->apiKey,
+            'redirect_uri' => $redirect_uri,
             'response_type' => 'code',
-            'scope'         => $scope,
-            'state'         => $state,
+            'scope' => $scope,
+            'state' => $state,
         ];
 
         return self::API_OAUTH . 'auth' . '?' . http_build_query($query);
@@ -112,22 +111,20 @@ class Inoreader
      * @param string $code
      * @param string $redirect_uri
      *
-     * @see http://www.inoreader.com/developers/oauth
-     * @throws InoreaderException
      * @return Token
+     * @throws InoreaderException
+     * @see http://www.inoreader.com/developers/oauth
      */
     public function accessTokenFromCode(string $code, string $redirect_uri): Token
     {
-
-        $params = [
-            'code'          => $code,
-            'redirect_uri'  => $redirect_uri,
-            'client_id'     => $this->apiKey,
-            'client_secret' => $this->api_secret,
-            'scope'         => '',
-            'grant_type'    => 'authorization_code',
+        $params   = [
+            'code' => $code,
+            'redirect_uri' => $redirect_uri,
+            'client_id' => $this->apiKey,
+            'client_secret' => $this->apiSecret,
+            'scope' => '',
+            'grant_type' => 'authorization_code',
         ];
-
         $response = $this->getClient()->post(self::API_OAUTH . 'token', $params);
 
         return new Token($response);
@@ -138,20 +135,18 @@ class Inoreader
      *
      * @param string $refresh_token
      *
-     * @see http://www.inoreader.com/developers/oauth
-     * @throws InoreaderException
      * @return Token
+     * @throws InoreaderException
+     * @see http://www.inoreader.com/developers/oauth
      */
     public function accessTokenFromRefresh(string $refresh_token): Token
     {
-
-        $params = [
-            'client_id'     => $this->apiKey,
-            'client_secret' => $this->api_secret,
+        $params   = [
+            'client_id' => $this->apiKey,
+            'client_secret' => $this->apiSecret,
             'refresh_token' => $refresh_token,
-            'grant_type'    => 'refresh_token',
+            'grant_type' => 'refresh_token',
         ];
-
         $response = $this->getClient()->post(self::API_OAUTH . 'token', $params);
 
         return new Token($response);
@@ -176,9 +171,9 @@ class Inoreader
      *
      * @param string $url feedId to subscribe to
      *
-     * @see https://www.inoreader.com/developers/add-subscription
-     * @throws InoreaderException
      * @return AddSubscription
+     * @throws InoreaderException
+     * @see https://www.inoreader.com/developers/add-subscription
      */
     public function addSubscription(string $url): AddSubscription
     {
@@ -199,13 +194,12 @@ class Inoreader
      * @param string $params ['a']  Add subscription from folder.
      * @param string $params ['r']  Remove subscription from folder.
      *
-     * @see http://www.inoreader.com/developers/edit-subscription
-     * @throws InoreaderException
      * @return bool
+     * @throws InoreaderException
+     * @see http://www.inoreader.com/developers/edit-subscription
      */
     public function editSubscription(array $params): bool
     {
-
         $this->getClient()->post('subscription/edit', $params);
 
         return true;
@@ -221,7 +215,7 @@ class Inoreader
      */
     public function unreadCount(): UnreadCount
     {
-        $response = $this->getClient()->post('unread-count');
+        $response = $this->getClient()->get('unread-count');
 
         return new UnreadCount($response);
     }
@@ -236,11 +230,9 @@ class Inoreader
      */
     public function subscriptionList(): Subscriptions
     {
-
         $response = $this->getClient()->get('subscription/list');
 
         return new Subscriptions($response);
-
     }
 
 
@@ -250,23 +242,19 @@ class Inoreader
      * @param int|string $types  Set to 1 to get the item type. Can be tag, folder or active_search
      * @param int        $counts Set to 1 to get unread counts for tags and active searches.
      *
-     * @see http://www.inoreader.com/developers/tag-list
-     * @throws InoreaderException
      * @return Tag[]
+     * @throws InoreaderException
+     * @see http://www.inoreader.com/developers/tag-list
      */
     public function tagsList($types = 1, $counts = 1): array
     {
-
         $response = $this->getClient()->get('tag/list', ['types' => $types, 'counts' => $counts]);
-
-        $result = [];
-
+        $result   = [];
         foreach ($response->tags as $tag) {
             $result[] = new Tag($tag);
         }
 
         return $result;
-
     }
 
     /**
@@ -274,17 +262,15 @@ class Inoreader
      *
      * @param array $params
      *
-     * @see http://www.inoreader.com/developers/stream-contents
-     * @throws InoreaderException
      * @return StreamContents
+     * @throws InoreaderException
+     * @see http://www.inoreader.com/developers/stream-contents
      */
     public function streamContents(array $params = []): StreamContents
     {
-
         $response = $this->getClient()->get('stream/contents', $params);
 
         return new StreamContents($response);
-
     }
 
 
@@ -293,17 +279,15 @@ class Inoreader
      *
      * @param array $params
      *
-     * @see http://www.inoreader.com/developers/stream-contents
-     * @throws InoreaderException
      * @return ItemIds
+     * @throws InoreaderException
+     * @see http://www.inoreader.com/developers/stream-contents
      */
     public function itemsIds(array $params = []): ItemIds
     {
-
         $response = $this->getClient()->get('stream/items/ids', $params);
 
         return new ItemIds($response);
-
     }
 
 
@@ -317,11 +301,9 @@ class Inoreader
      */
     public function streamPreferenceList(): StreamPreferenceList
     {
-
         $response = $this->getClient()->get('preference/stream/list');
 
         return new StreamPreferenceList($response);
-
     }
 
 
@@ -329,16 +311,17 @@ class Inoreader
      * List of folders and the system.
      *
      * @param string $stream_id Stream ID
-     * @param string $key       Key Only accepted is subscription-ordering
-     * @param string $value     Value.
+     * @param string|null $key       Key Only accepted is subscription-ordering
+     * @param string|null $value     Value.
      *
-     * @see http://www.inoreader.com/developers/preference-set
-     * @throws InoreaderException
      * @return bool
+     * @throws InoreaderException
+     * @see http://www.inoreader.com/developers/preference-set
      */
     public function streamPreferenceSet(string $stream_id, $key = null, $value = null): bool
     {
-        $this->getClient()->post('preference/stream/set',
+        $this->getClient()->post(
+            'preference/stream/set',
             [
                 's' => $stream_id,
                 'k' => $key,
@@ -347,7 +330,6 @@ class Inoreader
         );
 
         return true;
-
     }
 
 
@@ -357,15 +339,16 @@ class Inoreader
      * @param string $source Source name
      * @param string $target Target name
      *
-     * @see http://www.inoreader.com/developers/rename-tag
-     * @throws InoreaderException
      * @return bool
+     * @throws InoreaderException
+     * @see http://www.inoreader.com/developers/rename-tag
      */
     public function renameTag(string $source, string $target): bool
     {
-        $this->getClient()->post('rename-tag',
+        $this->getClient()->post(
+            'rename-tag',
             [
-                's'    => $source,
+                's' => $source,
                 'dest' => $target,
             ]
         );
@@ -379,13 +362,14 @@ class Inoreader
      *
      * @param string $source Full tag name
      *
-     * @see http://www.inoreader.com/developers/delete-tag
-     * @throws InoreaderException
      * @return bool
+     * @throws InoreaderException
+     * @see http://www.inoreader.com/developers/delete-tag
      */
     public function deleteTag(string $source): bool
     {
-        $this->getClient()->post('disable-tag',
+        $this->getClient()->post(
+            'disable-tag',
             [
                 's' => $source,
             ]
@@ -397,24 +381,21 @@ class Inoreader
     /**
      * This method is used to mark articles as read, or to star them.
      *
-     * @param array  $item  Item ID
-     * @param string $add    Tag to add
-     * @param string $remove Tag to remove
+     * @param array       $items   Item IDs
+     * @param string|null $add    Tag to add
+     * @param string|null $remove Tag to remove
      *
-     * @see http://www.inoreader.com/developers/edit-tag
-     * @throws InoreaderException
      * @return bool
+     * @throws InoreaderException
+     * @see http://www.inoreader.com/developers/edit-tag
      */
-    public function editTag($item, string $add = null, string $remove = null): bool
+    public function editTag(array $items, string $add = null, string $remove = null): bool
     {
-
-
         $params = [
-            'i' => $item,
+            'i' => $items,
             'a' => $add,
             'r' => $remove,
         ];
-
         $this->getClient()->post('edit-tag', $params);
 
         return true;
@@ -427,20 +408,38 @@ class Inoreader
      * @param int    $timestamp Unix Timestamp in seconds or microseconds.
      * @param string $stream_id Stream ID
      *
-     * @see http://www.inoreader.com/developers/mark-all-as-read
-     * @throws InoreaderException
      * @return bool
+     * @throws InoreaderException
+     * @see https://www.inoreader.com/developers/mark-all-as-read
      */
     public function markAllAsRead(int $timestamp, string $stream_id): bool
     {
-
-        $this->getClient()->get('mark-all-as-read', [
-            'ts' => $timestamp,
-            's'  => $stream_id,
-        ]);
+        $this->getClient()->get(
+            'mark-all-as-read',
+            [
+                'ts' => $timestamp,
+                's' => $stream_id,
+            ]
+        );
 
         return true;
     }
 
+    /**
+     * This method delete an active search.
+     *
+     * @param string $id Mandatory parameter
+     *
+     * @return bool
+     * @throws InoreaderException
+     * @see https://www.inoreader.com/developers/active-search-delete
+     */
+    public function deleteActiveSearch(string $id): bool
+    {
 
+        $this->getClient()->get('active_search/delete', [
+            'id' => $id,
+        ]);
+        return true;
+    }
 }

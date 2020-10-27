@@ -1,8 +1,8 @@
-<?php declare(strict_types=1);
+<?php
 
+declare(strict_types=1);
 
 namespace ExileeD\Inoreader\Objects;
-
 
 class ItemRef extends AbstractObject implements ObjectInterface
 {
@@ -12,14 +12,13 @@ class ItemRef extends AbstractObject implements ObjectInterface
         return $this->data->id;
     }
 
-    public function directStreamIds():array
+    public function directStreamIds(): array
     {
         return $this->data->directStreamIds;
     }
 
-    public function timestampUsec():string
+    public function timestampUsec(): string
     {
         return $this->data->timestampUsec;
     }
-
 }

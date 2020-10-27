@@ -1,8 +1,8 @@
-<?php declare(strict_types=1);
+<?php
 
+declare(strict_types=1);
 
 namespace ExileeD\Inoreader\Objects;
-
 
 class AbstractObject
 {
@@ -21,6 +21,4 @@ class AbstractObject
     {
         $this->data = $data;
     }
-
-
 }

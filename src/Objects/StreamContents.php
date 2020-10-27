@@ -1,8 +1,8 @@
-<?php declare(strict_types=1);
+<?php
 
+declare(strict_types=1);
 
 namespace ExileeD\Inoreader\Objects;
-
 
 class StreamContents extends AbstractObject implements ObjectInterface
 {
@@ -42,6 +42,10 @@ class StreamContents extends AbstractObject implements ObjectInterface
         return $this->data->updatedUsec;
     }
 
+    public function continuation(): ?string
+    {
+        return $this->data->continuation ?? null;
+    }
 
     /**
      * @return Item[]
@@ -50,12 +54,10 @@ class StreamContents extends AbstractObject implements ObjectInterface
     {
 
         $items = [];
-
         foreach ($this->data->items as $item) {
             $items[] = new Item($item);
         }
 
         return $items;
     }
-
 }

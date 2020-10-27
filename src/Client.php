@@ -1,10 +1,11 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace ExileeD\Inoreader;
 
-
-use ExileeD\Inoreader\HttpClient\ClientInterface;
-use ExileeD\Inoreader\HttpClient\GuzzleClient;
+use ExileeD\Inoreader\HttpClient\HttpClient;
+use ExileeD\Inoreader\HttpClient\GuzzleHttpClient;
 use ExileeD\Inoreader\Exception\InoreaderException;
 use Psr\Http\Message\ResponseInterface;
 
@@ -12,99 +13,86 @@ class Client
 {
 
     /**
-     * @var ClientInterface
+     * The default base URL.
+     *
+     * @var string
      */
-    private $http_client;
+    private const BASE_URL = 'https://www.inoreader.com/reader/api/0/';
+
+
+    /**
+     * The default base OAuth2 URL.
+     *
+     * @var string
+     */
+    private const API_OAUTH = 'https://www.inoreader.com/oauth2/';
+
+    /**
+     * The default user agent header.
+     *
+     * @var string
+     */
+    private const USER_AGENT = 'inoreader-php/1.0.0 (+https://github.com/exileed/inoreader-api)';
+
+    /**
+     * @var array
+     */
+    private array $defaultHeaders = [
+        'User-Agent' => self::USER_AGENT,
+    ];
+
+    /**
+     * @var HttpClient
+     */
+    private $httpClient;
 
 
     /** @var string|null */
-    private $access_token = null;
+    private $accessToken = null;
 
     /**
      * Instantiates a new Client object.
      *
-     * @param ClientInterface|null $http_client_handler
+     * @param HttpClient|null $httpClient
      */
-    public function __construct(ClientInterface $http_client_handler = null)
+    public function __construct(HttpClient $httpClient = null)
     {
-        $this->http_client = $http_client_handler ?? new GuzzleClient();
-    }
-
-    /**
-     * Makes a POST request to the Inoreader API and returns the response
-     *
-     * @param string $endpoint
-     * @param array  $params
-     *
-     * @throws InoreaderException
-     * @return \stdClass|bool
-     */
-    public function post(string $endpoint, $params = [])
-    {
-
-        $headers = $this->headers();
-
-        $response = $this->getHttpClient()->post($endpoint, $params, $headers);
-
-        return $this->processResponse($response);
-
-    }
-
-    private function headers(): array
-    {
-
-        $headers = [];
-        if ($this->getAccessToken() !== null) {
-            $headers[ 'Authorization' ] = 'Bearer ' . $this->getAccessToken();
-        }
-
-        return $headers;
-
+        $this->httpClient = $httpClient ?? new GuzzleHttpClient();
     }
 
     /**
      * @return string
+     * @todo
      */
     public function getAccessToken(): ?string
     {
-        return $this->access_token;
+        return $this->accessToken;
     }
 
     /**
-     * @param string $access_token
+     * @param string|null $token
+     *
+     * @return void
      */
-    public function setAccessToken(string $access_token): void
+    public function setAccessToken(string $token = null)
     {
-        $this->access_token = $access_token;
+        if ($token === null) {
+            unset($this->defaultHeaders[ 'Authorization' ]);
+            $this->accessToken = null;
+        } else {
+            $this->defaultHeaders[ 'Authorization' ] = \sprintf('Bearer %s', $token);
+            $this->accessToken                       = $token;
+        }
     }
 
     /**
      * Returns the inoreader client's http client to the given http client. Client.
      *
-     * @return  ClientInterface
+     * @return  HttpClient
      */
-    public function getHttpClient(): ClientInterface
+    public function getHttpClient(): HttpClient
     {
-        return $this->http_client;
-    }
-
-    /**
-     * Makes a request to the Inoreader API and returns the response
-     *
-     * @param    ResponseInterface $response
-     *
-     * @return   \stdClass|bool The JSON response from the request
-     * @throws   InoreaderException
-     */
-    private function processResponse(ResponseInterface $response)
-    {
-        $content = $response->getBody()->getContents();
-
-        if ($content === 'OK') {
-            return true;
-        }
-
-        return json_decode($content);
+        return $this->httpClient;
     }
 
     /**
@@ -113,18 +101,63 @@ class Client
      * @param string $endpoint
      * @param array  $params
      *
-     * @throws InoreaderException
      * @return \stdClass
+     * @throws InoreaderException
      */
     public function get(string $endpoint, $params = [])
     {
-
-        $headers = $this->headers();
-
-        $response = $this->getHttpClient()->get($endpoint, $params, $headers);
-
-        return $this->processResponse($response);
-
+        return $this->send('GET', $endpoint, $params);
     }
 
+    /**
+     * Makes a POST request to the Inoreader API and returns the response
+     *
+     * @param string       $endpoint
+     * @param string|array $body
+     *
+     * @return \stdClass
+     * @throws InoreaderException
+     */
+    public function post(string $endpoint, $body)
+    {
+        return $this->send('POST', $endpoint, $body);
+    }
+
+    /**
+     * Makes a request to the Inoreader API and returns the response
+     *
+     * @param string $method
+     * @param string $uri
+     * @param        $body
+     * @param array  $headers
+     *
+     * @return bool|\stdClass
+     */
+    private function send(string $method, string $uri, $body, array $headers = [])
+    {
+        $url = \sprintf('%s%s', self::BASE_URL, $uri);
+
+        $headers = \array_merge($this->defaultHeaders, $headers);
+
+        $response = $this->httpClient->request($url, $body, $method, $headers);
+
+        return $this->processResponse($response);
+    }
+
+    /**
+     *
+     * @param ResponseInterface $response
+     *
+     * @return   \stdClass|bool The JSON response from the request
+     * @throws   InoreaderException
+     */
+    private function processResponse(ResponseInterface $response)
+    {
+        $content = $response->getBody()->getContents();
+        if ($content === 'OK') {
+            return true;
+        }
+
+        return json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+    }
 }

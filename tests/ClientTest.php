@@ -1,11 +1,10 @@
 <?php
+
 declare(strict_types=1);
 
 namespace ExileeD\Inoreader\Test;
 
 use ExileeD\Inoreader\Client;
-use ExileeD\Inoreader\HttpClient\ClientInterface;
-use ExileeD\Inoreader\HttpClient\GuzzleClient;
 use PHPUnit\Framework\TestCase;
 
 class ClientTest extends TestCase
@@ -16,60 +15,21 @@ class ClientTest extends TestCase
      */
     private $client;
 
-
-    public function setUp()
+    public function setUp(): void
     {
-
-        $guzzle = $this->getHttpClientMock();
-
-        $client = $this->getMockBuilder(Client::class)
-                       ->setMethods(['processResponse', 'get', 'post'])
-                       ->setConstructorArgs([$guzzle])
-                       ->getMock();
-
-
-        $this->client = $client;
-
+        $this->client = new Client();
     }
 
-    protected function getHttpClientMock()
+    public function testItChecksGetAccessToken(): void
     {
-        return $this->getMockBuilder(GuzzleClient::class)
-                    ->setMethods(['get', 'post', 'put', 'delete', 'request'])
-                    ->getMock();
+        $token = '123';
+        $this->client->setAccessToken($token);
+        self::assertSame($token, $this->client->getAccessToken());
     }
 
-    /** @test */
-    public function it_checks_http_client()
+    public function testItChecksGetAccessTokenIsNull(): void
     {
-
-        $result =  $this->client->getHttpClient();
-
-        self::assertInstanceOf(ClientInterface::class, $result);
+        $this->client->setAccessToken();
+        self::assertNull($this->client->getAccessToken());
     }
-
-
-    /** @test */
-    public function it_checks_post()
-    {
-        $result =  $this->client->post('test');
-
-        self::assertInstanceOf(\stdClass::class, $result);
-    }
-
-
-    /** @test */
-    public function it_checks_get()
-    {
-        $result =  $this->client->get('test');
-
-        self::assertInstanceOf(\stdClass::class, $result);
-    }
-
-
-
-
-
-
-
 }

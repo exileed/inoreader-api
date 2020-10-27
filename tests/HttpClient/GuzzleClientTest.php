@@ -1,108 +1,78 @@
 <?php
+
 declare(strict_types=1);
 
-namespace ExileeD\Inoreader\Test\Client;
+namespace ExileeD\Inoreader\Test\HttpClient;
 
-use ExileeD\Inoreader\HttpClient\GuzzleClient;
+use ExileeD\Inoreader\Exception\InoreaderException;
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Handler\MockHandler;
+use ExileeD\Inoreader\HttpClient\HttpClient;
+use ExileeD\Inoreader\HttpClient\GuzzleHttpClient;
+use GuzzleHttp\Client;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
+use GuzzleHttp\Psr7\Response;
+use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\HandlerStack;
 
 class GuzzleClientTest extends TestCase
 {
 
     /**
-     * @var GuzzleClient
+     * @var GuzzleHttpClient
      */
     private $client;
 
-
-    public function setUp()
+    public function setUp(): void
     {
+        $mock = new MockHandler(
+            [
+                new Response(200, [], 'Ok'),
+            ]
+        );
 
+        $handlerStack = HandlerStack::create($mock);
+        $client       = new Client(['handler' => $handlerStack]);
 
-        $this->client = $this->getHttpClientMock();
-
+        $this->client = new GuzzleHttpClient($client);
     }
 
-    protected function getHttpClientMock()
+    public function testItChecksInstanceOfClient(): void
     {
-        return $this->getMockBuilder(GuzzleClient::class)
-                    ->setMethods(['get', 'post', 'put', 'delete', 'request'])
-                    ->getMock();
+        self::assertInstanceOf(Client::class, $this->client->getClient());
     }
 
-    /** @test */
-    public function it_checks_instance_of_client()
+    public function testItChecksCreateGuzzleClient(): void
     {
-        $this->assertInstanceOf(Client\ClientInterface::class, $this->client);
+        $client = new GuzzleHttpClient();
+        $client->setClient(new Client());
+        self::assertInstanceOf(Client::class, $client->getClient());
     }
 
-    /** @test */
-    public function it_checks_instance_of_guzzle_client()
+    public function testRequestResponceOk(): void
     {
-        $result = $this->client->getClient();
-
-        $this->assertInstanceOf(\GuzzleHttp\Client::class, $result);
+        $response = $this->client->request('test');
+        self::assertInstanceOf(ResponseInterface::class, $response);
+        self::assertSame(200, $response->getStatusCode());
+        self::assertSame('Ok', $response->getBody()->getContents());
     }
 
-    /** @test */
-    public function it_checks_api_base_url()
+    public function testRequestResponseException(): void
     {
-        $url = 'https://www.inoreader.com/reader/api/0/';
+        $this->expectException(InoreaderException::class);
 
-        $result = $this->client->getApiBaseUrl();
+        $mock = new MockHandler(
+            [
+                new RequestException('Error Communicating with Server', new Request('GET', 'error')),
+            ]
+        );
 
-        $this->assertEquals($url, $result);
+        $handlerStack = HandlerStack::create($mock);
+        $client       = new Client(['handler' => $handlerStack]);
+
+        $client = new GuzzleHttpClient($client);
+
+        $client->request('error');
     }
-
-    /** @test */
-    public function it_checks_set_client(){
-
-        $guzzle = new \GuzzleHttp\Client();
-        $this->client->setClient($guzzle);
-        $result =  $this->client->getClient();
-
-        $this->assertInstanceOf(\GuzzleHttp\Client::class, $result);
-
-    }
-
-
-    /** @test */
-    public function it_checks_post_request()
-    {
-
-        $result = $this->client->post('test');
-
-        $this->assertInstanceOf(ResponseInterface::class, $result);
-    }
-
-
-    /** @test */
-    public function it_checks_get()
-    {
-
-        $result = $this->client->get('test',[]);
-
-        $this->assertInstanceOf(ResponseInterface::class, $result);
-    }
-
-    /** @test */
-    public function it_checks_request()
-    {
-        $result = $this->client->request('test');
-
-        $this->assertInstanceOf(ResponseInterface::class, $result);
-    }
-
-//
-//    /** @test */
-//    public function it_checks_get()
-//    {
-//
-//        $result =  $this->client->get('test');
-//
-//        $this->assertInstanceOf(\stdClass::class, $result);
-//    }
-
-
 }
