@@ -29,7 +29,7 @@ class Client
     /**
      * @var array
      */
-    private array $defaultHeaders = [
+    private $defaultHeaders = [
         'User-Agent' => self::USER_AGENT,
     ];
 
