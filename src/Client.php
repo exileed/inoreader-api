@@ -19,14 +19,6 @@ class Client
      */
     private const BASE_URL = 'https://www.inoreader.com/reader/api/0/';
 
-
-    /**
-     * The default base OAuth2 URL.
-     *
-     * @var string
-     */
-    private const API_OAUTH = 'https://www.inoreader.com/oauth2/';
-
     /**
      * The default user agent header.
      *
@@ -135,7 +127,7 @@ class Client
      */
     private function send(string $method, string $uri, $body, array $headers = [])
     {
-        $url = \sprintf('%s%s', self::BASE_URL, $uri);
+        $url = strpos($uri, 'http') !== false ?  $uri : \sprintf('%s%s', self::BASE_URL, $uri);
 
         $headers = \array_merge($this->defaultHeaders, $headers);
 

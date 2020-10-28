@@ -19,6 +19,11 @@ use ExileeD\Inoreader\Objects\UserInfo;
 class Inoreader
 {
 
+    /**
+     *  The default base URL.
+     *
+     * @var string
+     */
     private const API_OAUTH = 'https://www.inoreader.com/oauth2/';
 
     /**

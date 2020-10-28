@@ -32,11 +32,7 @@ class GuzzleHttpClient implements HttpClient
      */
     private static function createClient()
     {
-        return new GuzzleClient(
-            [
-                'http_errors' => false,
-            ]
-        );
+        return new GuzzleClient();
     }
 
     /**
