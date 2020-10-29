@@ -6,6 +6,7 @@ namespace ExileeD\Inoreader;
 
 use ExileeD\Inoreader\HttpClient\HttpClient;
 use ExileeD\Inoreader\Exception\InoreaderException;
+use ExileeD\Inoreader\Objects\ActiveSearch;
 use ExileeD\Inoreader\Objects\AddSubscription;
 use ExileeD\Inoreader\Objects\ItemIds;
 use ExileeD\Inoreader\Objects\StreamContents;
@@ -90,7 +91,8 @@ class Inoreader
     }
 
     /**
-     * @param string $redirect_uri This is the address that the user will be redirected to when he authorizes your application from the consent page.
+     * @param string $redirect_uri This is the address that the user will be redirected to when he authorizes
+     *                             your application from the consent page.
      * @param string $scope        You can pass read or read write
      * @param string $state        Up to 500 bytes of arbitrary data that will be passed back to your redirect URI.
      *
@@ -144,12 +146,12 @@ class Inoreader
      * @throws InoreaderException
      * @see http://www.inoreader.com/developers/oauth
      */
-    public function accessTokenFromRefresh(string $refresh_token): Token
+    public function accessTokenFromRefresh(string $refreshToken): Token
     {
         $params   = [
             'client_id' => $this->apiKey,
             'client_secret' => $this->apiSecret,
-            'refresh_token' => $refresh_token,
+            'refresh_token' => $refreshToken,
             'grant_type' => 'refresh_token',
         ];
         $response = $this->getClient()->post(self::API_OAUTH . 'token', $params);
@@ -185,7 +187,7 @@ class Inoreader
         $params   = [
             'quickadd' => $url,
         ];
-        $response = $this->getClient()->post('subscription/quickadd', $params);
+        $response = $this->getClient()->post('subscription/quickadd', [], $params);
 
         return new AddSubscription($response);
     }
@@ -205,7 +207,7 @@ class Inoreader
      */
     public function editSubscription(array $params): bool
     {
-        $this->getClient()->post('subscription/edit', $params);
+        $this->getClient()->post('subscription/edit', [], $params);
 
         return true;
     }
@@ -265,15 +267,16 @@ class Inoreader
     /**
      * Returns the articles for a given collection.
      *
-     * @param array $params
+     * @param string $streamId Streams can be feeds, tags (folders) or system types
+     * @param array  $params
      *
      * @return StreamContents
      * @throws InoreaderException
      * @see http://www.inoreader.com/developers/stream-contents
      */
-    public function streamContents(array $params = []): StreamContents
+    public function streamContents(string $streamId, array $params = []): StreamContents
     {
-        $response = $this->getClient()->get('stream/contents', $params);
+        $response = $this->getClient()->get(sprintf('stream/contents/%s', $streamId), $params);
 
         return new StreamContents($response);
     }
@@ -397,7 +400,7 @@ class Inoreader
     public function editTag(array $items, string $add = null, string $remove = null): bool
     {
         $params = [
-            'i' => $items,
+            'i' => implode(',', $items),
             'a' => $add,
             'r' => $remove,
         ];
@@ -431,6 +434,22 @@ class Inoreader
     }
 
     /**
+     * This method create an active search.
+     *
+     * @param array $params
+     *
+     * @return ActiveSearch
+     * @throws InoreaderException
+     * @see https://www.inoreader.com/developers/active-search-create
+     */
+    public function createActiveSearch(array $params): ActiveSearch
+    {
+        $response = $this->getClient()->post('active_search/create', [], $params);
+
+        return new ActiveSearch($response);
+    }
+
+    /**
      * This method delete an active search.
      *
      * @param string $id Mandatory parameter
@@ -441,7 +460,6 @@ class Inoreader
      */
     public function deleteActiveSearch(string $id): bool
     {
-
         $this->getClient()->get('active_search/delete', [
             'id' => $id,
         ]);

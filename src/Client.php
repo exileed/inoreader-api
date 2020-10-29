@@ -105,14 +105,15 @@ class Client
      * Makes a POST request to the Inoreader API and returns the response
      *
      * @param string       $endpoint
-     * @param string|array $body
+     * @param array $params
+     * @param string|array|null $body
+     *
      *
      * @return \stdClass
-     * @throws InoreaderException
      */
-    public function post(string $endpoint, $body)
+    public function post(string $endpoint, $params = [], $body = null)
     {
-        return $this->send('POST', $endpoint, $body);
+        return $this->send('POST', $endpoint, $params, $body);
     }
 
     /**
@@ -125,13 +126,13 @@ class Client
      *
      * @return bool|\stdClass
      */
-    private function send(string $method, string $uri, $body, array $headers = [])
+    private function send(string $method, string $uri, array $params, $body = null, array $headers = [])
     {
-        $url = strpos($uri, 'http') !== false ?  $uri : \sprintf('%s%s', self::BASE_URL, $uri);
+        $url = mb_substr($uri, 0, 4) === 'http' ?  $uri : \sprintf('%s%s', self::BASE_URL, $uri);
 
         $headers = \array_merge($this->defaultHeaders, $headers);
 
-        $response = $this->httpClient->request($url, $body, $method, $headers);
+        $response = $this->httpClient->request($url, $params, $body, $method, $headers);
 
         return $this->processResponse($response);
     }

@@ -2,14 +2,6 @@
 
 declare(strict_types=1);
 
-/**
- * @package inoreader-api
- *
- * @author  Dmitriy Kuts <me@exileed.com>
- * @link    http://exileed.com
- *
- */
-
 namespace ExileeD\Inoreader\Objects;
 
 class ItemIds extends AbstractObject implements ObjectInterface

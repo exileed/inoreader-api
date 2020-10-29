@@ -14,14 +14,20 @@ interface HttpClient
      *
      * @access public
      *
-     * @param string       $endpoint
+     * @param string $endpoint
      * @param string|array $params
-     * @param string       $method
-     * @param array        $headers
+     * @param array|null $body
+     * @param string $method
+     * @param array $headers
      *
      * @return ResponseInterface
      * @throws InoreaderException
      */
-    public function request(string $endpoint, array $params = [], string $method = 'GET', array $headers = []):
-    ResponseInterface;
+    public function request(
+        string $endpoint,
+        array $params = [],
+        $body = null,
+        string $method = 'GET',
+        array $headers = []
+    ): ResponseInterface;
 }

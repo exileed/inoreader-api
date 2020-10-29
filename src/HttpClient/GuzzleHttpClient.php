@@ -38,14 +38,18 @@ class GuzzleHttpClient implements HttpClient
     /**
      * @inheritdoc
      */
-    public function request($endpoint, $params = [], $method = 'GET', array $headers = []): ResponseInterface
-    {
-        $options = array_merge(
-            $params,
-            [
-                'headers' => $headers,
-            ]
-        );
+    public function request(
+        $endpoint,
+        $params = [],
+        $body = [],
+        $method = 'GET',
+        array $headers = []
+    ): ResponseInterface {
+        $options = [
+            'headers' => $headers,
+            'json' => $body,
+            'query' => $params,
+        ];
         try {
             return $this->getClient()->request($method, $endpoint, $options);
         } catch (GuzzleException $e) {
