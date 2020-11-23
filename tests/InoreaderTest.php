@@ -307,13 +307,14 @@ class InoreaderTest extends TestCase
                         'canonical' =>
                             [
                                 [
-                                    'href' => 'http://feedproxy.google.com/~r/blogspot/MKuf/~3/_Hkdwh7yKMo/through-google-lens-search-trends_23.html',
+                                    'href' => '
+                                    http://feedproxy.google.com',
                                 ],
                             ],
                         'alternate' =>
                             [
                                 [
-                                    'href' => 'http://feedproxy.google.com/~r/blogspot/MKuf/~3/_Hkdwh7yKMo/through-google-lens-search-trends_23.html',
+                                    'href' => 'http://feedproxy.google.com',
                                     'type' => 'text/html',
                                 ],
                             ],
