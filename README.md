@@ -1,6 +1,6 @@
 # Inoreader PHP Client
 
-[![Latest Version](https://img.shields.io/github/release/exileed/inoreader-api.svg?style=flat-square)](https://github.com/exileed/inoreader-api/releases)
+[![Latest Version](https://img.shields.io/packagist/v/exileed/inoreader-api)](https://packagist.org/packages/exileed/inoreader-api)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 [![Build Status](https://img.shields.io/travis/exileed/inoreader-api/master.svg?style=flat-square&1)](https://travis-ci.org/exileed/inoreader-api)
 [![Coverage Status](https://img.shields.io/scrutinizer/coverage/g/exileed/inoreader-api.svg?style=flat-square)](https://scrutinizer-ci.com/g/exileed/inoreader-api/code-structure)
@@ -51,15 +51,66 @@ $apiSecret = 'xxxx';
 
 $client = new Inoreader( $apiKey, $apiSecret );
 $redirectUrl = 'http://localhost';
+$scope = 'test';
 
+$client->getLoginUrl($redirectUrl, $scope);
 
-$client->getLoginUrl($redirectUrl)
+$client->accessTokenFromCode('code', $redirectUrl);
 
+// Access token from refresh token
+$client->accessTokenFromCode('code', $redirectUrl);
 ```
 
 ### Advanced usage
 
-@todo
+User info
+
+```php
+$client->userInfo();
+```
+
+Add subscription
+```php
+$url = 'https://www.inoreader.com/blog/feed';
+
+$client->addSubscription($url);
+``` 
+
+Edit subscription
+
+```php
+$url = 'feed/https://www.inoreader.com/blog/feed';
+
+$client->editSubscription(['ac' => 'edit', 's' => $url, 't' => 'test']));
+```
+
+Unread count 
+
+```php
+$client->unreadCount():
+```
+
+Subscription list
+
+```php
+$client->subscriptionList();
+```
+
+Folders and tags list
+
+```php
+use ExileeD\Inoreader\Objects\Tag;
+
+$type = Tag::TYPE_ITEM;
+//$type = Tag::TYPE_TAG;
+//$type = Tag::TYPE_FOLDER;
+//$type = Tag::TYPE_ACTIVE_SEARCH;
+
+$client->tagsList($type, $count);
+
+```
+
+
 
 ## Testing
 

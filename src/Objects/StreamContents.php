@@ -27,9 +27,9 @@ class StreamContents extends AbstractObject implements ObjectInterface
         return $this->data->description;
     }
 
-    public function self()
+    public function self(): ItemSelf
     {
-        return $this->data->self;
+        return new ItemSelf($this->data->self);
     }
 
     public function updated(): int
@@ -37,7 +37,7 @@ class StreamContents extends AbstractObject implements ObjectInterface
         return $this->data->updated;
     }
 
-    public function updatedUsec(): int
+    public function updatedUsec(): string
     {
         return $this->data->updatedUsec;
     }

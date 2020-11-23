@@ -34,7 +34,7 @@ class UserInfo extends AbstractObject implements ObjectInterface
         return $this->data->isBloggerUser;
     }
 
-    public function signupTimeSec(): string
+    public function signupTimeSec(): int
     {
         return $this->data->signupTimeSec;
     }

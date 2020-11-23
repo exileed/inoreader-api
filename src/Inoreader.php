@@ -132,7 +132,7 @@ class Inoreader
             'scope' => '',
             'grant_type' => 'authorization_code',
         ];
-        $response = $this->getClient()->post(self::API_OAUTH . 'token', $params);
+        $response = $this->getClient()->post(self::API_OAUTH . 'token', [], $params);
 
         return new Token($response);
     }
@@ -154,7 +154,7 @@ class Inoreader
             'refresh_token' => $refreshToken,
             'grant_type' => 'refresh_token',
         ];
-        $response = $this->getClient()->post(self::API_OAUTH . 'token', $params);
+        $response = $this->getClient()->post(self::API_OAUTH . 'token', [], $params);
 
         return new Token($response);
     }
@@ -187,7 +187,7 @@ class Inoreader
         $params   = [
             'quickadd' => $url,
         ];
-        $response = $this->getClient()->post('subscription/quickadd', [], $params);
+        $response = $this->getClient()->post('subscription/quickadd', $params);
 
         return new AddSubscription($response);
     }
@@ -195,11 +195,11 @@ class Inoreader
     /**
      * This method is used to rename the subscription, add it to a folder, remove it from folder or unsubscribe from it.
      *
-     * @param string $params ['ac'] Action. Can be edit, subscribe, or unsubscribe.
-     * @param string $params ['s']  Stream ID
-     * @param string $params ['t']  Subscription title.
-     * @param string $params ['a']  Add subscription from folder.
-     * @param string $params ['r']  Remove subscription from folder.
+     * @param string $params['ac'] Action. Can be edit, subscribe, or unsubscribe.
+     * @param string $params['s']  Stream ID
+     * @param string $params['t']  Subscription title.
+     * @param string $params['a']  Add subscription from folder.
+     * @param string $params['r']  Remove subscription from folder.
      *
      * @return bool
      * @throws InoreaderException
@@ -207,7 +207,7 @@ class Inoreader
      */
     public function editSubscription(array $params): bool
     {
-        $this->getClient()->post('subscription/edit', [], $params);
+        $this->getClient()->post('subscription/edit', $params);
 
         return true;
     }
@@ -318,20 +318,20 @@ class Inoreader
     /**
      * List of folders and the system.
      *
-     * @param string $stream_id Stream ID
-     * @param string|null $key       Key Only accepted is subscription-ordering
-     * @param string|null $value     Value.
+     * @param string      $streamId Stream ID
+     * @param string|null $key      Key Only accepted is subscription-ordering
+     * @param string|null $value    Value.
      *
      * @return bool
      * @throws InoreaderException
      * @see http://www.inoreader.com/developers/preference-set
      */
-    public function streamPreferenceSet(string $stream_id, $key = null, $value = null): bool
+    public function streamPreferenceSet(string $streamId, $key = null, $value = null): bool
     {
         $this->getClient()->post(
             'preference/stream/set',
             [
-                's' => $stream_id,
+                's' => $streamId,
                 'k' => $key,
                 'v' => $value,
             ]
@@ -414,19 +414,19 @@ class Inoreader
      * This method marks all items in a given stream as read.
      *
      * @param int    $timestamp Unix Timestamp in seconds or microseconds.
-     * @param string $stream_id Stream ID
+     * @param string $streamId  Stream ID
      *
      * @return bool
      * @throws InoreaderException
      * @see https://www.inoreader.com/developers/mark-all-as-read
      */
-    public function markAllAsRead(int $timestamp, string $stream_id): bool
+    public function markAllAsRead(int $timestamp, string $streamId): bool
     {
         $this->getClient()->get(
             'mark-all-as-read',
             [
                 'ts' => $timestamp,
-                's' => $stream_id,
+                's' => $streamId,
             ]
         );
 

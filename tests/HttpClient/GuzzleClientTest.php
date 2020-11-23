@@ -7,7 +7,6 @@ namespace ExileeD\Inoreader\Test\HttpClient;
 use ExileeD\Inoreader\Exception\InoreaderException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Handler\MockHandler;
-use ExileeD\Inoreader\HttpClient\HttpClient;
 use ExileeD\Inoreader\HttpClient\GuzzleHttpClient;
 use GuzzleHttp\Client;
 use PHPUnit\Framework\TestCase;
@@ -50,7 +49,7 @@ class GuzzleClientTest extends TestCase
         self::assertInstanceOf(Client::class, $client->getClient());
     }
 
-    public function testRequestResponceOk(): void
+    public function testRequestResponseOk(): void
     {
         $response = $this->client->request('test');
         self::assertInstanceOf(ResponseInterface::class, $response);

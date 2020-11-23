@@ -2,12 +2,12 @@
 
 Contributions are **welcome** and will be fully **credited**.
 
-We accept contributions via Pull Requests on [Github](https://github.com/stevenmaguire/yelp-php).
+We accept contributions via Pull Requests on [Github](https://github.com/exileed/inoreder-api).
 
 
 ## Pull Requests
 
-- **[PSR-2 Coding Standard](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md)** - The easiest way to apply the conventions is to install [PHP Code Sniffer](http://pear.php.net/package/PHP_CodeSniffer).
+- **[PSR-12 Coding Standard](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-12-extended-coding-style-guide.md)** - The easiest way to apply the conventions is to install [PHP Code Sniffer](http://pear.php.net/package/PHP_CodeSniffer).
 
 - **Add tests!** - Your patch won't be accepted if it doesn't have tests.
 
@@ -32,7 +32,7 @@ $ ./vendor/bin/phpunit
 ## Running PHP Code Sniffer
 
 ``` bash
-$ ./vendor/bin/phpcs src --standard=psr2 -sp
+$ ./vendor/bin/phpcs
 ```
 
 

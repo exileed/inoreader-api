@@ -37,14 +37,15 @@ class Item extends AbstractObject implements ObjectInterface
         return $this->data->updated;
     }
 
-    public function id()
+    public function id(): string
     {
         return $this->data->id;
     }
 
-    public function canonical()
+    /**  */
+    public function canonical(): array
     {
-        return $this->data->canonical;
+        return new ItemCanonical($this->data->canonical);
     }
 
     public function alternate()
@@ -57,7 +58,7 @@ class Item extends AbstractObject implements ObjectInterface
         return new Summary($this->data->summary);
     }
 
-    public function author()
+    public function author(): string
     {
         return $this->data->author;
     }

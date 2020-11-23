@@ -7,7 +7,6 @@ namespace ExileeD\Inoreader\Objects;
 class AddSubscription extends AbstractObject implements ObjectInterface
 {
 
-
     public function query(): string
     {
         return $this->data->query;
@@ -25,6 +24,6 @@ class AddSubscription extends AbstractObject implements ObjectInterface
 
     public function streamName(): string
     {
-        return $this->data->streamId;
+        return $this->data->streamName;
     }
 }

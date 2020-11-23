@@ -7,13 +7,20 @@ namespace ExileeD\Inoreader\Objects;
 class UnreadCount extends AbstractObject implements ObjectInterface
 {
 
-    public function max(): string
+    public function max(): int
     {
         return $this->data->max;
     }
 
-    public function unreadcounts()
+    /**
+     * @return SingleUnreadCount[]
+     */
+    public function unreadCounts(): array
     {
-        return $this->data->unreadcounts;
+        $counts = [];
+        foreach ($this->data->unreadcounts as $count) {
+            $counts[] = new SingleUnreadCount($count);
+        }
+        return $counts;
     }
 }

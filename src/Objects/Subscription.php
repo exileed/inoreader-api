@@ -17,9 +17,22 @@ class Subscription extends AbstractObject implements ObjectInterface
         return $this->data->title;
     }
 
+    public function feedType(): string
+    {
+        return $this->data->feedType;
+    }
+
+    /**
+     * @return Category[]
+     */
     public function categories(): array
     {
-        return $this->data->categories;
+        $items = [];
+        foreach ($this->data->categories as $category) {
+            $items[] = new Category($category);
+        }
+
+        return $items;
     }
 
     public function sortId(): string
@@ -27,7 +40,7 @@ class Subscription extends AbstractObject implements ObjectInterface
         return $this->data->sortid;
     }
 
-    public function firstItemMsec(): string
+    public function firstItemMsec(): int
     {
         return $this->data->firstitemmsec;
     }
