@@ -16,7 +16,11 @@ jobs:
       - name: composer install
         run: composer install
       - name: PHP Unit tests for PHP ${{ matrix.php }}
-        run: vendor/bin/phpunit
+        run: vendor/bin/phpunit --coverage-text --coverage-clover=coverage.clover
+      - name: Send code coverage
+        run: |
+            wget https://scrutinizer-ci.com/ocular.phar
+            php ocular.phar code-coverage:upload --format=php-clover coverage.clover
   codestyle:
     name: Codestyle
     runs-on: ubuntu-latest

@@ -2,7 +2,7 @@
 
 [![Latest Version](https://img.shields.io/packagist/v/exileed/inoreader-api)](https://packagist.org/packages/exileed/inoreader-api)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
-![Build Status](https://img.shields.io/github/workflow/status/exileed/inoreader-api/main?style=flat-square&1
+![Build Status](https://img.shields.io/github/workflow/status/exileed/inoreader-api/test?style=flat-square&1
 )
 [![Coverage Status](https://img.shields.io/scrutinizer/coverage/g/exileed/inoreader-api.svg?style=flat-square)](https://scrutinizer-ci.com/g/exileed/inoreader-api/code-structure)
 [![Quality Score](https://img.shields.io/scrutinizer/g/exileed/inoreader-api.svg?style=flat-square)](https://scrutinizer-ci.com/g/exileed/inoreader-api)
