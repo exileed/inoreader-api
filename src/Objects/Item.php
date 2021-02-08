@@ -45,7 +45,7 @@ class Item extends AbstractObject implements ObjectInterface
     /**  */
     public function canonical(): array
     {
-        return new ItemCanonical($this->data->canonical);
+        return array_map(fn($item) => new ItemCanonical($item), $this->data->canonical);
     }
 
     public function alternate()
