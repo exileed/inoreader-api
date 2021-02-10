@@ -12,12 +12,12 @@ class ItemIds extends AbstractObject implements ObjectInterface
         return $this->data->items;
     }
 
-    /**
+   /**
      * @return ItemRef[]
      */
     public function itemRefs(): array
     {
-        return $this->data->itemRefs;
+        return array_map(fn($item) => new ItemRef($item), $this->data->itemRefs);
     }
 
     public function continuation(): ?string
